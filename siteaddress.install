@@ -1,0 +1,9 @@
+/**
+ * Implements hook_uninstall().
+ */
+function siteaddress_uninstall() {
+  // Delete the custom address config values.
+  \Drupal::configFactory()->getEditable('system.site')
+    ->clear(‘address’)
+    ->save();
+}
