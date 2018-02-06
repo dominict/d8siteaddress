@@ -3,3 +3,5 @@ description: 'Add site address to basic site settings.'
 type: module
 core: '8.x'
 project: 'Site Address'
+dependencies:
+ – address:address
