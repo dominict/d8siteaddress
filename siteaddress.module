@@ -1,0 +1,53 @@
+/**
+ * @file
+ * Main module file.
+ */
+ 
+use Drupal\Core\Form\FormStateInterface;
+use CommerceGuys\Addressing\AddressFormat\AddressField;
+
+/**
+ * Implements hook_form_ID_alter().
+ */
+ 
+//this module adds a site address to the default settings of a Drupal 8 site
+function siteaddress_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state) {
+  // Create our contact information section.
+  $form['site_location'] = [
+    '#type' => 'details',
+    '#title' => t('Site Location'),
+    '#open' => TRUE,
+  ];
+ 
+  $form['site_location']['address'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Address'),
+  ];
+  
+    // Create the address field.
+  $form['site_location']['address']['site_address'] = [
+    '#type' => 'address',
+    '#default_value' => \Drupal::config('system.site')->get('address') ?? [
+      'country_code' => 'US',
+    '#used_fields' => [
+      AddressField::ADDRESS_LINE1,
+      AddressField::ADDRESS_LINE2,
+      AddressField::ADMINISTRATIVE_AREA,
+      AddressField::LOCALITY,
+      AddressField::POSTAL_CODE,
+    ],
+    '#available_countries' => ['US'],
+  ];
+  
+   // Add a custom submit handler for our new values.
+  $form['#submit'][] = 'siteaddress_site_address_submit';
+}
+
+/**
+* Custom submit handler for our address settings.
+*/
+function siteaddress_site_address_submit($form, FormStateInterface $form_state) {
+  \Drupal::configFactory()->getEditable('system.site')
+    ->set(‘address’, $form_state->getValue('site_address'))
+    ->save();
+}
