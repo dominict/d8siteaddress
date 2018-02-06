@@ -1,0 +1,3 @@
+siteaddress:
+  dependencies:
+    - commerceguys/addressing
